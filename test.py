@@ -1,4 +1,4 @@
-from json_validator import json_object, string, optional, either
+from dictvalidator import json_object, string, optional, either
 
 
 def test_0():
