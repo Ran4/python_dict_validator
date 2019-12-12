@@ -58,3 +58,27 @@ def test_deeper_with_dict_validator_syntax():
             second_level=43,
         ))
     validator({"first_level": {"second_level": 43}})
+
+
+def test_very_deep():
+    validator = dict_validator(
+        first_level=dict_validator(
+            second_level=dict_validator(
+                third_level=dict_validator(
+                    fourth_level="ok",
+                ),
+            ),
+        ))
+
+    validator(dict(
+        first_level=dict(
+            second_level=dict(
+                third_level=dict(
+                    fourth_level="ok")))))
+
+    with pytest.raises(ValidationError):
+        validator(dict(
+            first_level=dict(
+                second_level=dict(
+                    third_level=dict(
+                        fourth_level="not ok")))))
