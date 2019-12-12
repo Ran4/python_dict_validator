@@ -10,22 +10,29 @@ pip install -e python_dict_validator
 
 ```python
 from dictvalidator import dict_validator
+import dictvalidator.validators as v
 
 validator = dict_validator(
-    name=string,
     secret="43",
-    email=string,
-    password=string,
-    comment=optional(string),
-    magic=either(45, "NOTHING"),
-    random_value=optional,
+    name=dict_validator(
+        first_name=string,
+        surname=optional(string),
+    ),
+    email=v.string,
+    password=v.string,
+    comment=v.optional(string),
+    magic=v.either(45, "NOTHING"),
+    random_value=v.optional,
 )
 # `validator` is now of type `Callable[[Dict], None]`
 
 # If this would fail, `dictvalidator.ValidationError` would be raised
 validator({
-    "name": "",
     "secret": "43",
+    "name": {
+        "first_name": "",
+        "surname": optional(string),
+    },
     "email": "kdwqd@cool",
     "password": "kdwqd",
     "magic": "NOTHING",
