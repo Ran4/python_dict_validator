@@ -1,6 +1,6 @@
 from typing import Dict, Tuple
 
-from .validators import (
+from dictvalidator.validators import (
     string,
     integer,
     optional,
@@ -148,7 +148,6 @@ def dict_validator(*args, **kwargs):
     >>> dict_validator(secret=integer(43))
     >>> dict_validator({"secret": 43})
     """
-    #
     if not kwargs and args and isinstance(args[0], dict):
         return dict_validator(**args[0])
 

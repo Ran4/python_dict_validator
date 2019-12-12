@@ -1,7 +1,7 @@
 import pytest
 
-from . import dict_validator, ValidationError
-from . import validators as v
+from dictvalidator import dict_validator, ValidationError
+import dictvalidator.validators as v
 
 
 def test_0():

@@ -12,7 +12,7 @@ install: .venv/lib/python3.6/site-packages/dictvalidator.egg-link
 .PHONY: uninstall
 uninstall: .venv/bin/activate
 	. .venv/bin/activate \
-	    && pip uninstall dict_validator
+	    && pip uninstall dictvalidator
 
 test: .venv/lib/python3.6/site-packages/dictvalidator.egg-link
 	. .venv/bin/activate && \
