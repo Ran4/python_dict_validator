@@ -1,3 +1,9 @@
+### Installation
+
+```
+git clone https://github.com/Ran4/python_dict_validator
+pip install -e python_dict_validator
+```
 
 ### Usage
 
