@@ -154,8 +154,7 @@ def _validate(field_name: str, value, validator) -> None:
                 field_name, ",".join(map(str, validator.validators))))
 
     else:
-        print(f"Unknown validator {validator} on field `{field_name}`")
-        import pdb; pdb.set_trace()
+        raise Exception(f"Unknown validator {validator} on field `{field_name}`")
 
 
 def _validation_pass(d, *args, **kwargs) -> None:

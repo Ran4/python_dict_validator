@@ -5,7 +5,7 @@
 
 
 ```python
-from dictvalidator import
+from dictvalidator import dict_validator
 
 validator = dict_validator(
     name=string,
@@ -16,7 +16,9 @@ validator = dict_validator(
     magic=either(45, "NOTHING"),
     random_value=optional,
 )
+# `validator` is now of type `Callable[[Dict], None]`
 
+# If this would fail, `dictvalidator.ValidationError` would be raised
 validator({
     "name": "",
     "secret": "43",
