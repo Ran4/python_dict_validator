@@ -1,60 +1,18 @@
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
+
+from .validators import (
+    string,
+    integer,
+    optional,
+    _EitherHolder,
+    either,
+    format_validator,
+    _is_optional_validator,
+)
 
 
 class ValidationError(Exception):
     pass
-
-# Implicit: "something" -> checks for equal to "something"
-# Implicit: 34 -> checks for equal to 34
-
-def string(expected):
-    return (string, expected)
-
-
-def integer(expected):
-    return (integer, expected)
-
-
-def optional(type_):
-    return (optional, type_)
-
-
-class _EitherHolder:
-    def __init__(self, validators: List):
-        self.validators = validators
-
-
-def either(*validators):
-    return _EitherHolder(validators)
-
-
-def format_validator(validator) -> str:
-    if isinstance(validator, tuple):
-        return ", ".join(format_validator(v) for v in validator)
-    elif validator is string:
-        return "string"
-    elif validator is integer:
-        return "integer"
-    elif validator is optional:
-        return "optional"
-    elif isinstance(validator, str):
-        return f"equal to \"{validator}\""
-    elif isinstance(validator, int):
-        return f"equal to {validator}"
-    elif isinstance(validator, _EitherHolder):
-        return "one of:\n" + "\n".join("| " + format_validator(v)
-                                       for v in validator.validators)
-    else:
-        return str(validator)
-
-
-def _is_optional_validator(validator) -> bool:
-    if validator is optional:
-        return True
-    elif isinstance(validator, tuple) and any(x is optional for x in validator):
-        return True
-    else:
-        return False
 
 
 def _existence_pass(value, *args, **kwargs) -> None:
@@ -153,6 +111,13 @@ def _validate(field_name: str, value, validator) -> None:
             "Field `{}` did not fullfill requirement {}".format(
                 field_name, format_validator(validator)))
 
+    elif hasattr(validator, "__name__") and \
+            validator.__name__ == "dict_validator_runner":
+        validator(value)
+
+    elif isinstance(validator, dict):
+        return dict_validator(**validator)(value)
+
     else:
         raise Exception(f"Unknown validator {validator} on field `{field_name}`")
 
@@ -169,10 +134,35 @@ def _validation_pass(d, *args, **kwargs) -> None:
 
 
 def dict_validator(*args, **kwargs):
-    def inner(value: Dict):
+    """
+    Usage:
+    >>> validator = dict_validator(**validator_kwargs)
+    OR
+    >>> validator = dict_validator(validator_kwargs)
+    >>> validator(some_dictionary)  # None or raises ValidationError
+    where each element of `validator_kwargs` has a string key representing
+    the field name and a value that must be a valid validation object.
+
+    Examples, these are all identical:
+    >>> dict_validator(secret=43)
+    >>> dict_validator(secret=integer(43))
+    >>> dict_validator({"secret": 43})
+    """
+    #
+    if not kwargs and args and isinstance(args[0], dict):
+        return dict_validator(**args[0])
+
+    def dict_validator_runner(value: Dict) -> None:
+        """Validates input `value`.
+        Returns:
+            None - on success
+
+        Raises:
+            ValidationError - on validation error
+        """
         if not isinstance(value, dict):
             raise ValidationError("Must be dict")
 
         _existence_pass(value, *args, **kwargs)
         _validation_pass(value, *args, **kwargs)
-    return inner
+    return dict_validator_runner

@@ -1,22 +1,17 @@
 import pytest
 
-from dictvalidator import (
-    dict_validator,
-    string,
-    optional,
-    either,
-    ValidationError,
-)
+from . import dict_validator, ValidationError
+from . import validators as v
 
 
 def test_0():
     validator = dict_validator(
-        name=string,
+        name=v.string,
         secret="43",
-        email=string,
-        password=string,
-        comment=optional(string),
-        random_value=optional,
+        email=v.string,
+        password=v.string,
+        comment=v.optional(v.string),
+        random_value=v.optional,
     )
 
     validator({
@@ -30,11 +25,36 @@ def test_0():
 
 
 def test_either_success():
-    validator = dict_validator(secret=either(string("9"), 0))
+    validator = dict_validator(secret=v.either(v.string("9"), 0))
     validator({"secret": 0})
 
 
 def test_either_failure():
-    validator = dict_validator(secret=either("43", "44"))
+    validator = dict_validator(secret=v.either("43", "44"))
     with pytest.raises(ValidationError):
         validator({"secret": "40"})
+
+
+def test_dict_syntax():
+    validator = dict_validator({"secret": 43})
+    validator({"secret": 43})
+
+
+def test_dict_syntax2():
+    validator = dict_validator({"secret": v.integer(v.either(43, 45))})
+    validator({"secret": 43})
+
+def test_deeper_with_dict_syntax():
+    validator = dict_validator(
+        first_level={
+            "second_level": 43,
+        })
+    validator({"first_level": {"second_level": 43}})
+
+
+def test_deeper_with_dict_validator_syntax():
+    validator = dict_validator(
+        first_level=dict_validator(
+            second_level=43,
+        ))
+    validator({"first_level": {"second_level": 43}})
