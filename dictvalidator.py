@@ -150,8 +150,8 @@ def _validate(field_name: str, value, validator) -> None:
             except ValidationError:
                 pass
         raise ValidationError(
-            "Field `{}` did not fullfill requirement either({})".format(
-                field_name, ",".join(map(str, validator.validators))))
+            "Field `{}` did not fullfill requirement {}".format(
+                field_name, format_validator(validator)))
 
     else:
         raise Exception(f"Unknown validator {validator} on field `{field_name}`")

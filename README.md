@@ -1,6 +1,4 @@
 
-
-
 ### Usage
 
 
@@ -27,4 +25,13 @@ validator({
     "magic": "NOTHING",
     "random_value": False,
 })
+```
+
+
+### Running tests
+
+Activate a virtualenv, `pip install -r requirements.txt`, then:
+
+```bash
+pytest -v
 ```
