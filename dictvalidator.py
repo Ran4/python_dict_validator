@@ -109,12 +109,12 @@ def _validate(field_name: str, value, validator) -> None:
         _validate_validator_tuple(field_name, value, validator)
 
     elif isinstance(validator, str):
-        # json_object(my_field="bar")
+        # dict_validator(my_field="bar")
         _expect_string(field_name, value)
         _expect_value(field_name, found=value, expected=validator)
 
     elif isinstance(validator, int):
-        # json_object(my_field=49)
+        # dict_validator(my_field=49)
         _expect_integer(field_name, value)
         _expect_value(field_name, found=value, expected=validator)
 
@@ -169,7 +169,7 @@ def _validation_pass(d, *args, **kwargs) -> None:
         _validate(field_name, value, validator)
 
 
-def json_object(*args, **kwargs):
+def dict_validator(*args, **kwargs):
     def inner(value: Dict):
         if not isinstance(value, dict):
             raise ValidationError("Must be dict")

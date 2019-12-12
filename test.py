@@ -1,9 +1,9 @@
-from dictvalidator import json_object, string, optional, either
+from dictvalidator import dict_validator, string, optional, either
 
 
 def test_0():
     print("\n" + "*"*10 + " Big test")
-    validator = json_object(
+    validator = dict_validator(
         name=string,
         secret="43",
         email=string,
@@ -24,13 +24,13 @@ def test_0():
 
 def test_either_success():
     print("\n" + "*"*10 + " Either test")
-    validator = json_object(secret=either(string("9"), 0))
+    validator = dict_validator(secret=either(string("9"), 0))
     validator({"secret": 0})
 
 
 def test_either_failure():
     print("\n" + "*"*10 + " Either test (failing)")
-    validator = json_object(secret=either("43", "44"))
+    validator = dict_validator(secret=either("43", "44"))
     validator({"secret": "40"})
 
 
