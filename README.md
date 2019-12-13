@@ -40,6 +40,10 @@ validator({
 })
 ```
 
+### Coloring
+
+Colors in the output is disabled by default, but can be enabled by setting the environment variable
+`DICTVALIDATOR_USE_COLORS=1`
 
 ### Running tests
 

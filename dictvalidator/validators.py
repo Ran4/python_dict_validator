@@ -1,4 +1,5 @@
 from typing import List, Tuple
+import re
 
 # Implicit: tuple of validators -> All tuple elements must validate correctly
 # Implicit: "something" -> checks for equal to "something"
@@ -15,6 +16,15 @@ def integer(expected):
 
 def optional(type_):
     return (optional, type_)
+
+
+class _RegexHolder:
+    def __init__(self, pattern: str):
+        self.compiled_pattern = re.compile(pattern)
+
+
+def regex(pattern):
+    return _RegexHolder(pattern)
 
 
 class _EitherHolder:

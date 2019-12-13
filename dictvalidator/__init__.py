@@ -1,18 +1,59 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Callable
+import os
 
 from dictvalidator.validators import (
     string,
     integer,
     optional,
     _EitherHolder,
+    _RegexHolder,
     either,
     format_validator,
     _is_optional_validator,
 )
 
 
+def _setup_colors() -> Tuple[Callable, bool]:
+    """
+    Colors can be disabled before running by setting the environment variable
+    `DICTVALIDATOR_USE_COLORS=1` or during runtime with:
+
+    >>> import dictvalidator
+    >>> dictvalidator.use_colors = False
+    ```
+    """
+    if os.getenv("DICTVALIDATOR_USE_COLORS", "0").lower() in ["1", "true"]:
+        try:
+            import termcolor
+            return termcolor.colored, True
+        except ModuleNotFoundError:
+            pass
+
+    def colored(*args, **kwargs):
+        if args:
+            return args[0]
+        else:
+            return ""
+    return colored, False
+
+colored, use_colors = _setup_colors()
+
 class ValidationError(Exception):
     pass
+
+
+def format_field(field_name: str) -> str:
+    if use_colors:
+        return colored(field_name, "cyan")
+    else:
+        return f'"{field_name}"'
+
+
+def format_regex_pattern(pattern: str) -> str:
+    if use_colors:
+        return f"`{colored(pattern, 'cyan')}`"
+    else:
+        return f"`{pattern}`"
 
 
 def _existence_pass(value, *args, **kwargs) -> None:
@@ -33,7 +74,7 @@ def _expect_string(field_name, value) -> None:
     if not isinstance(value, str):
         raise ValidationError(
             f"Expected field `{field_name}` to be a string,"
-            f" was {type(field_name)}")
+            f" was {type(value)}")
     print(f"`{field_name}` was a string")
 
 
@@ -41,7 +82,7 @@ def _expect_integer(field_name, value) -> None:
     if not isinstance(value, int):
         raise ValidationError(
             f"Expected field `{field_name}` to be an integer,"
-            f" was {type(field_name)}")
+            f" was {type(value)}")
     print(f"`{field_name}` was an integer")
 
 
@@ -99,6 +140,16 @@ def _validate(field_name: str, value, validator) -> None:
     elif validator is optional:
         # my_field=optional
         pass
+
+    elif isinstance(validator, _RegexHolder):
+        _expect_string(field_name, value)
+
+        match = validator.compiled_pattern.match(value)
+        if not match:
+            raise ValidationError(
+                "Field {} did not match expected regex pattern {}".format(
+                    format_field(field_name),
+                    format_regex_pattern(validator.compiled_pattern.pattern)))
 
     elif isinstance(validator, _EitherHolder):
         any_success = False
