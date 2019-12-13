@@ -2,9 +2,10 @@ from typing import List, Tuple
 import re
 
 # Implicit: tuple of validators -> All tuple elements must validate correctly
-# Implicit: "something" -> checks for equal to "something"
-# Implicit: 34 -> checks for equal to 34
-# Implicit: any (builtin function) -> field must exists, but of any type
+# Implicit: True/False -> Must be True/False
+# Implicit: "something" -> Equal to "something"
+# Implicit: 34 -> Equal to 34
+# Implicit: any (builtin function) -> Field must exists, but may be of any type
 
 def string(expected):
     return (string, expected)

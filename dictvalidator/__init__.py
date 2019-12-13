@@ -75,12 +75,18 @@ def _existence_pass(___value___mangled, *args, **kwargs) -> None:
                 raise ValidationError(
                     f"Missing required field `{field_name}`")
 
+def _expect_bool(field_name, value) -> None:
+    if not isinstance(value, bool):
+        raise ValidationError(
+            f"Expected field `{field_name}` to be a boolean,"
+            f" was {type(value)}")
+
+
 def _expect_string(field_name, value) -> None:
     if not isinstance(value, str):
         raise ValidationError(
             f"Expected field `{field_name}` to be a string,"
             f" was {type(value)}")
-    print(f"`{field_name}` was a string")
 
 
 def _expect_integer(field_name, value) -> None:
@@ -88,11 +94,17 @@ def _expect_integer(field_name, value) -> None:
         raise ValidationError(
             f"Expected field `{field_name}` to be an integer,"
             f" was {type(value)}")
-    print(f"`{field_name}` was an integer")
 
 
 def _expect_value(field_name, found, expected) -> None:
     if found != expected:
+        raise ValidationError(
+            "Expected field `{}` to have value {}, found {}".format(
+                field_name, expected, found))
+
+
+def _expect_is(field_name, found, expected) -> None:
+    if found is not expected:
         raise ValidationError(
             "Expected field `{}` to have value {}, found {}".format(
                 field_name, expected, found))
@@ -112,6 +124,11 @@ def _validate(field_name: str, value, validator) -> None:
     if isinstance(validator, tuple):
         _validate_validator_tuple(field_name, value, validator)
 
+    elif isinstance(validator, bool):
+        # dict_validator(my_field=True)
+        _expect_bool(field_name, value)
+        _expect_is(field_name, found=value, expected=validator)
+
     elif isinstance(validator, str):
         # dict_validator(my_field="bar")
         _expect_string(field_name, value)
@@ -124,6 +141,9 @@ def _validate(field_name: str, value, validator) -> None:
 
     elif validator is any:
         pass
+
+    elif validator is bool:
+        _expect_bool(field_name, value)
 
     elif validator is string:
         # my_field=string or my_field=string("foo")
