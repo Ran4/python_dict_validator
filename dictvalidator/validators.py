@@ -60,11 +60,11 @@ def _format_validator(validator, indent) -> Iterable[str]:
         yield f"equal to {validator}"
     elif isinstance(validator, _EitherHolder):
         yield "One of"
-        yield from (" "*(next_indent) + format_validator(v, next_indent)
+        yield from (" "*(indent) + "| " + format_validator(v, next_indent)
                     for v in validator.validators)
     elif isinstance(validator, list):
         yield "List of elements"
-        yield from (" "*(next_indent) + "- " + format_validator(v, next_indent)
+        yield from (" "*(indent) + "- " + format_validator(v, next_indent)
                     for v in validator)
 
     else:
