@@ -56,10 +56,15 @@ def format_regex_pattern(pattern: str) -> str:
         return f"`{pattern}`"
 
 
-def _existence_pass(value, *args, **kwargs) -> None:
+def _existence_pass(___value___mangled, *args, **kwargs) -> None:
+    """
+    The first argument is mangled as `___value___mangled` as opposed to
+    `value` since otherwise it would prevent us from having a kwargs key called
+    `value`
+    """
     print("-- First pass: existence")
     for field_name, validator in kwargs.items():
-        if field_name in value:
+        if field_name in ___value___mangled:
             print(f"Found field_name `{field_name}`")
         else:
             print(f"Did not find field_name `{field_name}`")
@@ -207,6 +212,7 @@ def dict_validator(*args, **kwargs):
 
     def dict_validator_runner(value: Dict) -> None:
         """Validates input `value`.
+
         Returns:
             None - on success
 
