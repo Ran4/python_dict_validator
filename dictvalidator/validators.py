@@ -7,6 +7,8 @@ import re
 # Implicit: 34 -> Equal to 34
 # Implicit: any (builtin) -> Field must exists, but may be of any type
 # Implicit: bool (builtin) -> Must be True/False
+# Implicit: bytes (builtin) -> Must be bytes
+# Implicit: list (builtin) -> Must be a list of something
 # Implicit: str (builtin) -> Must be a string
 
 def string(expected):

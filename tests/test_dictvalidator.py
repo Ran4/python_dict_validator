@@ -24,29 +24,50 @@ def test_0():
     })
 
 
-def test_validator_str():
+def test_str():
     validator = dict_validator(name=str)
     validator({"name": "hello"})
 
 
-def test_validator_str_failure():
+def test_str_failure():
     validator = dict_validator(name=str)
     with pytest.raises(ValidationError):
         validator({"name": 40})
 
 
-def test_validator_string():
+def test_string():
     validator = dict_validator(name=v.string)
     validator({"name": "hello"})
 
 
-def test_validator_str_failure():
+def test_string_failure():
     validator = dict_validator(name=v.string)
     with pytest.raises(ValidationError):
         validator({"name": 40})
 
 
-def test_either_success():
+def test_bytes():
+    validator = dict_validator(value=bytes)
+    validator({"value": b"hello world"})
+
+
+def test_bytes_failure():
+    validator = dict_validator(value=bytes)
+    with pytest.raises(ValidationError):
+        validator({"value": "hello world"})
+
+
+def test_list():
+    validator = dict_validator(value=list)
+    validator({"value": []})
+
+
+def test_list_failure():
+    validator = dict_validator(value=list)
+    with pytest.raises(ValidationError):
+        validator({"value": (0,)})
+
+def test_either():
     validator = dict_validator(secret=v.either(v.string("9"), 0))
     validator({"secret": 0})
 
@@ -55,6 +76,67 @@ def test_either_failure():
     validator = dict_validator(secret=v.either("43", "44"))
     with pytest.raises(ValidationError):
         validator({"secret": "40"})
+
+
+def test_regex():
+    validator = dict_validator(value=v.regex(r".+ .+"))
+    validator({"value": "hello world"})
+
+
+def test_regex_failure():
+    validator = dict_validator(value=v.regex(r".+ .+"))
+    with pytest.raises(ValidationError):
+        validator({"value": "helloworld"})
+
+
+def test_bool_with_value_true():
+    validator = dict_validator(value=bool)
+    validator({"value": True})
+
+
+def test_bool_with_value_false():
+    validator = dict_validator(value=bool)
+    validator({"value": False})
+
+
+def test_bool_with_value_1_failure():
+    validator = dict_validator(value=bool)
+    with pytest.raises(ValidationError):
+        validator({"value": 1})
+
+
+def test_bool_with_value_0_failure():
+    validator = dict_validator(value=bool)
+    with pytest.raises(ValidationError):
+        validator({"value": 0})
+
+
+def test_true_with_value_true():
+    validator = dict_validator(value=True)
+    validator({"value": True})
+
+
+def test_false_with_value_false():
+    validator = dict_validator(value=False)
+    validator({"value": False})
+
+
+def test_true_with_value_1_failure():
+    validator = dict_validator(value=True)
+    with pytest.raises(ValidationError):
+        validator({"value": 1})
+
+
+def test_true_with_value_3_failure():
+    validator = dict_validator(value=True)
+    with pytest.raises(ValidationError):
+        validator({"value": 3})
+
+
+def test_false_with_value_0_failure():
+    validator = dict_validator(value=False)
+    with pytest.raises(ValidationError):
+        validator({"value": 0})
 
 
 def test_dict_syntax():
@@ -105,64 +187,3 @@ def test_very_deep():
                 second_level=dict(
                     third_level=dict(
                         fourth_level="not ok")))))
-
-
-def test_regex():
-    validator = dict_validator(value=v.regex(r".+ .+"))
-    validator({"value": "hello world"})
-
-
-def test_regex_failure():
-    validator = dict_validator(value=v.regex(r".+ .+"))
-    with pytest.raises(ValidationError):
-        validator({"value": "helloworld"})
-
-
-def test_bool_func_with_value_true():
-    validator = dict_validator(value=bool)
-    validator({"value": True})
-
-
-def test_bool_func_with_value_false():
-    validator = dict_validator(value=bool)
-    validator({"value": False})
-
-
-def test_bool_func_with_value_1_failure():
-    validator = dict_validator(value=bool)
-    with pytest.raises(ValidationError):
-        validator({"value": 1})
-
-
-def test_bool_func_with_value_0_failure():
-    validator = dict_validator(value=bool)
-    with pytest.raises(ValidationError):
-        validator({"value": 0})
-
-
-def test_bool_instance_with_value_true():
-    validator = dict_validator(value=True)
-    validator({"value": True})
-
-
-def test_bool_instance_with_value_false():
-    validator = dict_validator(value=False)
-    validator({"value": False})
-
-
-def test_bool_true_instance_with_value_1_failure():
-    validator = dict_validator(value=True)
-    with pytest.raises(ValidationError):
-        validator({"value": 1})
-
-
-def test_bool_true_instance_with_value_3_failure():
-    validator = dict_validator(value=True)
-    with pytest.raises(ValidationError):
-        validator({"value": 3})
-
-
-def test_bool_false_instance_with_value_0_failure():
-    validator = dict_validator(value=False)
-    with pytest.raises(ValidationError):
-        validator({"value": 0})

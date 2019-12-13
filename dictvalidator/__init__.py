@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Callable
+from typing import Dict, Tuple, Callable, Optional
 import os
 
 from dictvalidator.validators import (
@@ -82,6 +82,15 @@ def _expect_bool(field_name, value) -> None:
             f" was {type(value)}")
 
 
+def _expect_instance(
+        field_name, value, instance, instance_name: Optional[str]=None) -> None:
+    if not isinstance(value, instance):
+        raise ValidationError(
+            f"Expected field `{field_name}` to be"
+            f" {instance_name or instance},"
+            f" was {type(value)}")
+
+
 def _expect_string(field_name, value) -> None:
     if not isinstance(value, str):
         raise ValidationError(
@@ -144,6 +153,12 @@ def _validate(field_name: str, value, validator) -> None:
 
     elif validator is bool:
         _expect_bool(field_name, value)
+
+    elif validator is bytes:
+        _expect_instance(field_name, value, bytes)
+
+    elif validator is list:
+        _expect_instance(field_name, value, list)
 
     elif validator is str or validator is string:
         # my_field=string or my_field=string("foo")
