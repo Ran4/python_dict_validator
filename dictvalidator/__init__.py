@@ -154,11 +154,8 @@ def _validate(field_name: str, value, validator) -> None:
     elif validator is bool:
         _expect_bool(field_name, value)
 
-    elif validator is bytes:
-        _expect_instance(field_name, value, bytes)
-
-    elif validator is list:
-        _expect_instance(field_name, value, list)
+    elif validator is bytes or validator is list:
+        _expect_instance(field_name, value, validator)
 
     elif validator is str or validator is string:
         # my_field=string or my_field=string("foo")
