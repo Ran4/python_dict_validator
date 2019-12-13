@@ -68,6 +68,22 @@ def test_list_failure():
         validator({"value": (0,)})
 
 
+def test_list_instance():
+    validator = dict_validator(value=[])
+    validator({"value": []})
+
+
+def test_list_instance2():
+    validator = dict_validator(value=[3, "world", v.string, v.integer])
+    validator({"value": [3, "world", "hello", 42]})
+
+
+def test_list_instance_failure():
+    validator = dict_validator(value=[])
+    with pytest.raises(ValidationError):
+        validator({"value": (0,)})
+
+
 def test_tuple():
     validator = dict_validator(value=tuple)
     validator({"value": (3, 4)})

@@ -128,10 +128,19 @@ def _validate_validator_tuple(field_name, value, validator: Tuple) -> None:
 
 def _validate(field_name: str, value, validator) -> None:
     print("--- Field {} should be {}".format(
-        field_name, format_validator(validator),
+        format_field(field_name), format_validator(validator),
     ))
     if isinstance(validator, tuple):
         _validate_validator_tuple(field_name, value, validator)
+
+    elif isinstance(validator, list):
+        _expect_instance(field_name, value, list)
+        if len(value) != len(validator):
+            raise ValidationError(
+                "Field {} has length {}, expected length {}".format(
+                    format_field(field_name), len(value), len(validator)))
+        for i, (subvalidator, subvalue) in enumerate(zip(validator, value)):
+            _validate(format_field(f"{field_name}.{i}"), subvalue, subvalidator)
 
     elif isinstance(validator, bool):
         # dict_validator(my_field=True)

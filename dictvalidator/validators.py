@@ -2,6 +2,7 @@ from typing import List, Tuple
 import re
 
 # Implicit: tuple of validators -> All tuple elements must validate correctly
+# Implicit: [a, b, ...] -> Must fulfill all validators a, b, ...
 # Implicit: True/False -> Must be True/False
 # Implicit: "something" -> Equal to "something"
 # Implicit: 34 -> Equal to 34
