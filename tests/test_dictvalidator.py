@@ -67,6 +67,18 @@ def test_list_failure():
     with pytest.raises(ValidationError):
         validator({"value": (0,)})
 
+
+def test_tuple():
+    validator = dict_validator(value=tuple)
+    validator({"value": (3, 4)})
+
+
+def test_tuple_failure():
+    validator = dict_validator(value=tuple)
+    with pytest.raises(ValidationError):
+        validator({"value": [1, 2]})
+
+
 def test_either():
     validator = dict_validator(secret=v.either(v.string("9"), 0))
     validator({"secret": 0})
