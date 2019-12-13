@@ -76,6 +76,9 @@ def _validate(field_name: str, value, validator) -> None:
         _expect_integer(field_name, value)
         _expect_value(field_name, found=value, expected=validator)
 
+    elif validator is any:
+        pass
+
     elif validator is string:
         # my_field=string or my_field=string("foo")
         _expect_string(field_name, value)

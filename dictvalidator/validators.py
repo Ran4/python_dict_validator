@@ -1,7 +1,9 @@
 from typing import List, Tuple
 
+# Implicit: tuple of validators -> All tuple elements must validate correctly
 # Implicit: "something" -> checks for equal to "something"
 # Implicit: 34 -> checks for equal to 34
+# Implicit: any (builtin function) -> field must exists, but of any type
 
 def string(expected):
     return (string, expected)
