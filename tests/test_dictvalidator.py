@@ -24,6 +24,28 @@ def test_0():
     })
 
 
+def test_validator_str():
+    validator = dict_validator(name=str)
+    validator({"name": "hello"})
+
+
+def test_validator_str_failure():
+    validator = dict_validator(name=str)
+    with pytest.raises(ValidationError):
+        validator({"name": 40})
+
+
+def test_validator_string():
+    validator = dict_validator(name=v.string)
+    validator({"name": "hello"})
+
+
+def test_validator_str_failure():
+    validator = dict_validator(name=v.string)
+    with pytest.raises(ValidationError):
+        validator({"name": 40})
+
+
 def test_either_success():
     validator = dict_validator(secret=v.either(v.string("9"), 0))
     validator({"secret": 0})

@@ -5,7 +5,9 @@ import re
 # Implicit: True/False -> Must be True/False
 # Implicit: "something" -> Equal to "something"
 # Implicit: 34 -> Equal to 34
-# Implicit: any (builtin function) -> Field must exists, but may be of any type
+# Implicit: any (builtin) -> Field must exists, but may be of any type
+# Implicit: bool (builtin) -> Must be True/False
+# Implicit: str (builtin) -> Must be a string
 
 def string(expected):
     return (string, expected)

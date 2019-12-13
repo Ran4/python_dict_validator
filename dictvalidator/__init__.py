@@ -145,7 +145,7 @@ def _validate(field_name: str, value, validator) -> None:
     elif validator is bool:
         _expect_bool(field_name, value)
 
-    elif validator is string:
+    elif validator is str or validator is string:
         # my_field=string or my_field=string("foo")
         _expect_string(field_name, value)
 
