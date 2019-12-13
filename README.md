@@ -43,7 +43,11 @@ validator({
 
 ### Running tests
 
-Activate a virtualenv, `pip install -r requirements.txt`, then:
+* Activate a virtualenv
+* `pip install -r requirements.txt`
+* `pip install -e .`
+
+then:
 
 ```bash
 pytest -v
