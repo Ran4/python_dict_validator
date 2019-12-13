@@ -15,12 +15,12 @@ import dictvalidator.validators as v
 validator = dict_validator(
     secret="43",
     name=dict_validator(
-        first_name=string,
-        surname=optional(string),
+        first_name=v.string,
+        surname=v.optional(v.string),
     ),
     email=v.string,
     password=v.string,
-    comment=v.optional(string),
+    comment=v.optional(v.string),
     magic=v.either(45, "NOTHING"),
     random_value=v.optional,
 )
