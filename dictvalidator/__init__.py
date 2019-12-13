@@ -208,7 +208,7 @@ def _validate(field_name: str, value, validator) -> None:
             except ValidationError:
                 pass
         raise ValidationError(
-            "Field `{}` did not fullfill requirement {}".format(
+            "Field `{}` did not fullfill requirement\n{}".format(
                 field_name, format_validator(validator)))
 
     elif hasattr(validator, "__name__") and \

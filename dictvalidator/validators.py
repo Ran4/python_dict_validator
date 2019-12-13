@@ -59,22 +59,20 @@ def _format_validator(validator, indent) -> Iterable[str]:
     elif isinstance(validator, int):
         yield f"equal to {validator}"
     elif isinstance(validator, _EitherHolder):
-        yield "one of:"
-        yield from (
-            ("OR " if i > 0 else "   ") + format_validator(v, next_indent)
-            for i, v in enumerate(validator.validators))
+        yield "OR "
+        yield from (" "*(next_indent) + format_validator(v, next_indent)
+                    for v in validator.validators)
     elif isinstance(validator, list):
-        yield "["
-        yield from (("& " if i > 0 else "  ") + format_validator(v, next_indent)
-                    for i, v in enumerate(validator))
-        yield "]"
+        yield "ALL "
+        yield from (" "*(next_indent) + format_validator(v, next_indent)
+                    for v in validator)
 
     else:
         yield str(validator)
 
 
 def format_validator(validator, indent=0) -> str:
-    return "\n".join(" "*indent + line
+    return "\n".join(" "*indent*0 + line
                      for line in _format_validator(validator, indent))
 
 
