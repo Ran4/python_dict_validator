@@ -14,9 +14,10 @@ import dictvalidator.validators as v
 
 validator = dict_validator(
     secret="43",
-    name=dict_validator(
-        first_name=v.string,
-        surname=v.optional(v.string),
+    some_object=dict_validator(deeper="yes"),
+    name=v.either(
+        v.regex(r".+ .+"),
+        dict_validator(first_name=v.string, surname=v.string),
     ),
     email=v.string,
     password=v.string,
@@ -29,6 +30,9 @@ validator = dict_validator(
 # If this would fail, `dictvalidator.ValidationError` would be raised
 validator({
     "secret": "43",
+    "some_object": {
+        "deeper": "yes",
+    },
     "name": {
         "first_name": "",
         "surname": optional(string),
