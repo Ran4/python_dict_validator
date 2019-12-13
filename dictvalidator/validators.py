@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Iterable
 import re
 
 # Implicit: tuple of validators -> All tuple elements must validate correctly
@@ -43,24 +43,39 @@ def either(*validators):
     return _EitherHolder(validators)
 
 
-def format_validator(validator) -> str:
+def _format_validator(validator, indent) -> Iterable[str]:
+    next_indent = indent + 2
+
     if isinstance(validator, tuple):
-        return ", ".join(format_validator(v) for v in validator)
+        yield ", ".join(format_validator(v, next_indent) for v in validator)
     elif validator is string:
-        return "string"
+        yield "string"
     elif validator is integer:
-        return "integer"
+        yield "integer"
     elif validator is optional:
-        return "optional"
+        yield "optional"
     elif isinstance(validator, str):
-        return f"equal to \"{validator}\""
+        yield f"equal to \"{validator}\""
     elif isinstance(validator, int):
-        return f"equal to {validator}"
+        yield f"equal to {validator}"
     elif isinstance(validator, _EitherHolder):
-        return "one of:\n" + "\n".join("| " + format_validator(v)
-                                       for v in validator.validators)
+        yield "one of:"
+        yield from (
+            ("OR " if i > 0 else "   ") + format_validator(v, next_indent)
+            for i, v in enumerate(validator.validators))
+    elif isinstance(validator, list):
+        yield "["
+        yield from (("& " if i > 0 else "  ") + format_validator(v, next_indent)
+                    for i, v in enumerate(validator))
+        yield "]"
+
     else:
-        return str(validator)
+        yield str(validator)
+
+
+def format_validator(validator, indent=0) -> str:
+    return "\n".join(" "*indent + line
+                     for line in _format_validator(validator, indent))
 
 
 def _is_optional_validator(validator) -> bool:
