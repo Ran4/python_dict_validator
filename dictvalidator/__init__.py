@@ -22,7 +22,7 @@ def _setup_colors() -> Tuple[Callable, bool]:
     >>> dictvalidator.use_colors = False
     ```
     """
-    if os.getenv("DICTVALIDATOR_USE_COLORS", "0").lower() in ["1", "true"]:
+    if os.getenv("DICTVALIDATOR_USE_COLORS", "1").lower() in ["1", "true"]:
         try:
             import termcolor
             return termcolor.colored, True
@@ -213,10 +213,10 @@ def _validate(field_name: str, value, validator) -> None:
 
     elif hasattr(validator, "__name__") and \
             validator.__name__ == "dict_validator_runner":
-        validator(value)
+        validator(value, field_name=field_name)
 
     elif isinstance(validator, dict):
-        return dict_validator(**validator)(value)
+        return dict_validator(**validator)(value, field_name=field_name)
 
     else:
         raise Exception(f"Unknown validator {validator} on field `{field_name}`")
@@ -251,7 +251,7 @@ def dict_validator(*args, **kwargs):
     if not kwargs and args and isinstance(args[0], dict):
         return dict_validator(**args[0])
 
-    def dict_validator_runner(value: Dict) -> None:
+    def dict_validator_runner(value: Dict, field_name=None) -> None:
         """Validates input `value`.
 
         Returns:
@@ -261,7 +261,14 @@ def dict_validator(*args, **kwargs):
             ValidationError - on validation error
         """
         if not isinstance(value, dict):
-            raise ValidationError("Must be dict")
+            if field_name is None:
+                raise ValidationError(
+                    f"Expected top-level object to be a dictionary,"
+                    f" found {type(value)}")
+            else:
+                raise ValidationError(
+                    f"Expected field {format_field(field_name)} to be"
+                    f" a dictionary, found {type(value)}")
 
         _existence_pass(value, *args, **kwargs)
         _validation_pass(value, *args, **kwargs)
